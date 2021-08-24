@@ -1,38 +1,38 @@
 4
 ====
 
-T = \x y -> x
-F = \x y -> y
+T = λx. λy. x
+F = λx. λy. y
 
-XOR = \a b -> AND (OR a b) (NOT (AND a b))
+XOR = λa. λb. AND (OR a b) (NOT (AND a b))
 
-NOT = \a -> a F T
-NOT T = (\a -> a F T) (\x y -> x) -> (\x y -> x) F T -> F
-NOT F = (\a -> a F T) (\x y -> y) -> (\x y -> y) F T -> T
+NOT = λa. a F T
+NOT T = (λa. a F T) (λx y -> x) -> (λx λy. x) F T -> F
+NOT F = (λa. a F T) (λx y -> y) -> (λx λy. y) F T -> T
 
 
-AND = \a b -> a b F
-AND F F = (\a b -> a b F) F F -> F F F = (\x y -> y) F F -> F
-AND T F = (\a b -> a b F) T F -> T F F = (\x y -> x) F F -> F
-AND F T = (\a b -> a b F) F T -> F T F = (\x y -> y) T F -> F
-AND T T = (\a b -> a b F) T T -> T T F = (\x y -> x) T F -> T
+AND = λa. λb. a b F
+AND F F = (λa. λb. a b F) F F -> F F F = (λx λy. y) F F -> F
+AND T F = (λa. λb. a b F) T F -> T F F = (λx λy. x) F F -> F
+AND F T = (λa. λb. a b F) F T -> F T F = (λx λy. y) T F -> F
+AND T T = (λa. λb. a b F) T T -> T T F = (λx λy. x) T F -> T
 
-OR = \a b -> a T b
-OR F F = (\a b -> a T b) F F -> F T F = (\x y -> y) T F -> F
-OR T F = (\a b -> a T b) T F -> T T F = (\x y -> x) T F -> T
-OR F T = (\a b -> a T b) F T -> F T T = (\x y -> y) T T -> T
-OR T T = (\a b -> a T b) T T -> T T T = (\x y -> x) T T -> T
+OR = λa. λb. a T b
+OR F F = (λa. λb. a T b) F F -> F T F = (λx λy. y) T F -> F
+OR T F = (λa. λb. a T b) T F -> T T F = (λx λy. x) T F -> T
+OR F T = (λa. λb. a T b) F T -> F T T = (λx λy. y) T T -> T
+OR T T = (λa. λb. a T b) T T -> T T T = (λx λy. x) T T -> T
 
 
 5
 ====
 
-XOR = \a b -> AND (OR a b) (NOT (AND a b))       (v1)
-XOR = \a b -> a (NOT b) b -> \a b -> a (b F T) b   (v2) It is in normal form 
+XOR = λa. λb. AND (OR a b) (NOT (AND a b))       (v1)
+XOR = λa. λb. a (NOT b) b -> λa. λb. a (b F T) b   (v2) It is in normal form 
 
-XOR F F = (\a b -> a (NOT b) b) F F -> F (NOT F) F -> F
-XOR T F = (\a b -> a (NOT b) b) T F -> T (NOT F) F -> NOT F ->> T
-XOR F T = (\a b -> a (NOT b) b) F T -> F (NOT T) T -> T 
-XOR T T = (\a b -> a (NOT b) b) T T -> T (NOT T) T -> NOT T ->> F 
+XOR F F = (λa. λb. a (NOT b) b) F F -> F (NOT F) F -> F
+XOR T F = (λa. λb. a (NOT b) b) T F -> T (NOT F) F -> NOT F ->> T
+XOR F T = (λa. λb. a (NOT b) b) F T -> F (NOT T) T -> T 
+XOR T T = (λa. λb. a (NOT b) b) T T -> T (NOT T) T -> NOT T ->> F 
 
 

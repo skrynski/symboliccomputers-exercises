@@ -1,0 +1,26 @@
+-------- ex 1 ---------------------------------------
+
+free(x, e) = 
+
+    if atom(e) then // ATOM
+        if e = x then TRUE else FALSE 
+    else 
+        if is_lambda(e) then // LAMBDA
+            if contains(x, formals(e)) then 
+                FALSE
+            else
+                free(x, body(e))
+        else // APPLICATION
+            anySatisfy(\t | free(x, t),  e)
+
+anySatisfy(f, l) =  if empty?(l) then 
+                        FALSE
+                    else
+                        if f(car(l)) then
+                            TRUE
+                        else
+                            anySatisfy(f, cdr(l))
+                
+
+
+
