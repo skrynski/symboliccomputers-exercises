@@ -24,3 +24,38 @@ anySatisfy(f, l) =  if empty?(l) then
 
 
 
+
+
+-------- ex 2 ---------------------------------------
+
+subs(y,x,m) = 
+
+    if atom(m) then // ATOM
+        if e = x then y else x 
+    else 
+        if is_lambda(m) then // LAMBDA
+           
+
+            if contains(x, formals(m)) then 
+                m    
+            else
+                let newlambda=sanitizeLambda(m,y) in
+                    list('lambda, formals(newlambda), subs(y, x, body(newlambda))
+
+        else // APPLICATION
+            map(\t | subs(y,x,t),  m)
+
+sanitizeLambda(m,y)=
+    foldr(m, 
+        \var exp |
+                
+            if contains(var, free(y))
+                let nvar = newvar() in
+                    list(
+                        'lambda, 
+                        subs(nvar, var,formals(m)),
+                        subs(nvar, var,body(m)))                                       
+            else 
+                exp
+        ,
+        formals(m)) 
