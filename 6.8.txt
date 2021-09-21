@@ -1,0 +1,121 @@
+====  ex 4=====================
+
+; ORIGINAL VERSION
+subs(a,x,e) = "substitute a for x in e"
+
+    if is_id(e) then 
+        if e = x then a else e
+    else
+        if is_application(e) then
+            create_application(
+                subs(a,x,get_function(e)), 
+                subs(a,x, get_argument(e)))
+        else
+            let y = get_id(e) and c = get_body(e) in
+                if y = x then e
+                else
+                    let z = new_id() in
+                        create_function(z, 
+                        subs(a,x, subs(y, z, c)) 
+
+
+
+        
+; MODIFIED VERSION
+subs(a,x,e) = "substitute a for x in e"
+
+    if is_id(e) then 
+        if e = x then a else e  
+    else
+        if is_application(e) then
+            create_application(
+                subs(a,x,get_function(e)), 
+                subs(a,x, get_argument(e)))
+        else
+            let y = get_id(e) and c = get_body(e) in
+                if y = x then e
+                else
+                    if contains(y, free(c)) then 
+                        let z = new_id() in
+                            create_function(z, 
+                            subs(a,x, subs(y, z, c)) 
+                    else
+                        create_function(y, 
+                            subs(a,x, c))
+
+
+=====  ex 8 =========
+
+eval_logic(e, env) = 
+
+    if is_const(e) then
+        e
+    else
+        if is_id(e) then
+            lookup(e, env)
+        else
+            if is_and(e) then eval_and(e, env)
+            if is_or(e) then eval_or(e, env)
+            if is_not(e) then eval_not(e, env)
+            if is_let(e) then eval_let(e, env)
+
+eval_and(e, env) = 
+
+    if eval(op1_and(e), env) = T() then
+        eval(op2_and(e), env)
+    else
+        F()
+    
+
+
+eval_or(e, env) = 
+
+    if eval(op1_or(e), env) = T() then
+        T()
+    else
+        eval(op2_or(e), env)
+    
+
+
+eval_not(e, env) = 
+
+    if eval(op_not(e), env) = T() then
+        T()
+    else
+        F()
+
+
+eval_let(e, env) = 
+    let id = let_id(e) AND 
+        v = eval_logic(let_val(e), env) AND
+        body = let_body(e)
+    in
+        let newEnv = new_env(env, id, v) in
+            eval_logic(body, newEnv)
+        
+
+
+=======  ex 10 ====
+
+eval(e, list) = 
+....
+elseif is_cond(e,alist) then
+    eval_cond_else(cdr(e))
+...
+
+
+eval_cond_else(a) =
+
+    if null(a) then nil
+    else 
+        let z = car(a) in
+            if is_singleton(a) and is_singleton(z) then
+                eval(car(z))
+            elseif eval(car(z)) = T then
+                eval(cadr(z))
+            else
+                eval_cond_else(cdr(a))
+
+
+is_singleton(a) =
+    !null(car(a)) && null(cdr(a))
