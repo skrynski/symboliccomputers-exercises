@@ -1,0 +1,36 @@
+=============ex 1 =================
+
+a) NIL LDC 2 CONS LDC 1 CONS LDF (LD (1.2) LD (1.1) MPY RET) AP RET
+
+
+b) 
+s-exp : (let (f) ( 
+    (let (y) (4) (lambda (x) (* y x)))
+    
+    ) (f 3))
+
+NIL LDF (
+    NIL LDC 4 CONS LDF ( LDF (LD (1.1) LD (2.1) MPY RET) ) AP RET
+    
+)  CONS
+LDF (NIL LDC 3 CONS LD (1.1) AP RET)    
+AP RET
+
+c)
+
+s-exp : (letrec (f) ( 
+    lambda (n) (if (<= n 1) (1) (+ (f (- n 1)) (f (- n 2)))
+    
+    ) (f 3))
+
+
+DUM NIL LDF (
+
+    LDC 1 LD (1.1) <= SEL (LDC 1 JOIN) (
+        NIL LDC 2 LD (1.1) SUB CONS LD (2.1) AP
+        NIL LDC 1 LD (1.1) SUB CONS LD (2.1) AP
+        ADD
+    ) RET   
+
+) CONS 
+LDF (NIL LDC 3 CONS LD (1.1) AP RET) RAP
