@@ -28,34 +28,24 @@ anySatisfy(f, l) =  if empty?(l) then
 
 -------- ex 2 ---------------------------------------
 
-subs(y,x,m) = 
 
-    if atom(m) then // ATOM
-        if e = x then y else x 
-    else 
-        if is_lambda(m) then // LAMBDA
-           
 
-            if contains(x, formals(m)) then 
-                m    
-            else
-                let newlambda=sanitizeLambda(m,y) in
-                    list('lambda, formals(newlambda), subs(y, x, body(newlambda))
+; ORIGINAL VERSION
+subs(a,x,e) = "substitute a for x in e"
 
-        else // APPLICATION
-            map(\t | subs(y,x,t),  m)
+    if is_id(e) then 
+        if e = x then a else e
+    else
+        if is_application(e) then
+            create_application(
+                subs(a,x,get_function(e)), 
+                subs(a,x, get_argument(e)))
+        else
+            let y = get_id(e) and c = get_body(e) in
+                if y = x then e
+                else
+                    let z = new_id() in
+                        create_function(z, 
+                        subs(a,x, subs(z, y, c)) 
 
-sanitizeLambda(m,y)=
-    foldr(m, 
-        \var exp |
-                
-            if contains(var, free(y))
-                let nvar = newvar() in
-                    list(
-                        'lambda, 
-                        subs(nvar, var,formals(m)),
-                        subs(nvar, var,body(m)))                                       
-            else 
-                exp
-        ,
-        formals(m)) 
+

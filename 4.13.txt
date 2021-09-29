@@ -4,8 +4,6 @@
 T = λx. λy. x
 F = λx. λy. y
 
-XOR = λa. λb. AND (OR a b) (NOT (AND a b))
-
 NOT = λa. a F T
 NOT T = (λa. a F T) (λx y -> x) -> (λx λy. x) F T -> F
 NOT F = (λa. a F T) (λx y -> y) -> (λx λy. y) F T -> T
@@ -27,8 +25,7 @@ OR T T = (λa. λb. a T b) T T -> T T T = (λx λy. x) T T -> T
 5
 ====
 
-XOR = λa. λb. AND (OR a b) (NOT (AND a b))       (v1)
-XOR = λa. λb. a (NOT b) b -> λa. λb. a (b F T) b   (v2) It is in normal form 
+XOR = λa. λb. a (NOT b) b -> λa. λb. a (b F T) b    
 
 XOR F F = (λa. λb. a (NOT b) b) F F -> F (NOT F) F -> F
 XOR T F = (λa. λb. a (NOT b) b) T F -> T (NOT F) F -> NOT F ->> T

@@ -16,7 +16,7 @@ subs(a,x,e) = "substitute a for x in e"
                 else
                     let z = new_id() in
                         create_function(z, 
-                        subs(a,x, subs(y, z, c)) 
+                        subs(a,x, subs(z, y, c)) 
 
 
 
@@ -35,10 +35,10 @@ subs(a,x,e) = "substitute a for x in e"
             let y = get_id(e) and c = get_body(e) in
                 if y = x then e
                 else
-                    if contains(y, free(c)) then 
+                    if contains(y, free(a)) then 
                         let z = new_id() in
                             create_function(z, 
-                            subs(a,x, subs(y, z, c)) 
+                            subs(a,x, subs(z, y, c)) 
                     else
                         create_function(y, 
                             subs(a,x, c))
@@ -55,14 +55,14 @@ eval_logic(e, env) =
             lookup(e, env)
         else
             if is_and(e) then eval_and(e, env)
-            if is_or(e) then eval_or(e, env)
-            if is_not(e) then eval_not(e, env)
-            if is_let(e) then eval_let(e, env)
+            elseif is_or(e) then eval_or(e, env)
+            elseif is_not(e) then eval_not(e, env)
+            elseif is_let(e) then eval_let(e, env)
 
 eval_and(e, env) = 
 
-    if eval(op1_and(e), env) = T() then
-        eval(op2_and(e), env)
+    if eval_logic(op1_and(e), env) = T() then
+        eval_logic(op2_and(e), env)
     else
         F()
     
@@ -70,16 +70,16 @@ eval_and(e, env) =
 
 eval_or(e, env) = 
 
-    if eval(op1_or(e), env) = T() then
+    if eval_logic(op1_or(e), env) = T() then
         T()
     else
-        eval(op2_or(e), env)
+        eval_logic(op2_or(e), env)
     
 
 
 eval_not(e, env) = 
 
-    if eval(op_not(e), env) = T() then
+    if eval_logic(op_not(e), env) = T() then
         T()
     else
         F()
@@ -94,27 +94,37 @@ eval_let(e, env) =
             eval_logic(body, newEnv)
         
 
+eval_logic((LET x F (LET y T (AND (NOT x) (OR x y))), {})
+eval_logic((LET y T (AND (NOT x) (OR x y))), {x=F})
+eval_logic((AND (NOT x) (OR x y)), {x=F, y=T})
+eval_logic((AND T (OR x y)), {x=F, y=T})
+eval_logic((OR x y), {x=F, y=T})
+eval_logic(y, {x=F, y=T})
+T
+
+
+
 
 =======  ex 10 ====
 
-eval(e, list) = 
+eval(e, alist) = 
 ....
 elseif is_cond(e,alist) then
-    eval_cond_else(cdr(e))
+    eval_cond_else(cdr(e),alist)
 ...
 
 
-eval_cond_else(a) =
+eval_cond_else(a,alist) =
 
     if null(a) then nil
     else 
         let z = car(a) in
             if is_singleton(a) and is_singleton(z) then
-                eval(car(z))
-            elseif eval(car(z)) = T then
-                eval(cadr(z))
+                eval(car(z),alist)
+            elseif eval(car(z),alist) = T then
+                eval(cadr(z),alist)
             else
-                eval_cond_else(cdr(a))
+                eval_cond_else(cdr(a),alist)
 
 
 is_singleton(a) =
